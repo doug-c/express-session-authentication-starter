@@ -30,7 +30,24 @@ app.use(express.urlencoded({extended: true}));
  * -------------- SESSION SETUP ----------------
  */
 
-// TODO
+var sessionStore = new MongoStore({
+  mongooseConnection: connection,
+  collection: 'sessions',
+  ttl: 14*24*60*60, // = 14 days 
+  touchAfter: 24 * 3600 //time period in seconds 
+});
+
+app.use(
+  session({
+    store: sessionStore,
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: true, // save to store when new but not modified
+    cookie: { 
+      maxAge: 1000 * 60 * 60 * 24
+    }
+  })
+);
 
 /**
  * -------------- PASSPORT AUTHENTICATION ----------------
